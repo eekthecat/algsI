@@ -23,8 +23,9 @@ public class PercolationStats {
 				perc.open(rndX, rndY);
 				
 				if(perc.percolates()){
-					PercolationVisualizer.draw(perc, N);
+//					PercolationVisualizer.draw(perc, N);
 					percThresholds[i] = ((j*1D)/dim);
+					break;
 				}
 			}
 		}
@@ -41,7 +42,7 @@ public class PercolationStats {
 	}
 
 	public static void main(String[] args) {
-		PercolationStats ps = new PercolationStats(20, 100);
+		PercolationStats ps = new PercolationStats(200, 100);
 		System.out.println(ps.mean());
 		System.out.println(ps.stddev());
 	}
