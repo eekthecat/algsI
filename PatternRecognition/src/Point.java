@@ -49,15 +49,15 @@ public class Point implements Comparable<Point> {
 	// slope between this point and that point
 	public double slopeTo(Point that) {
 		if (this.x == that.x && this.y == that.y) { // Degenerate
-			return Integer.MIN_VALUE;
+			return Double.NEGATIVE_INFINITY;
 		}
 
 		if (this.x == that.x) { // Vertical
-			return Integer.MAX_VALUE;
+			return Double.POSITIVE_INFINITY;
 		}
 
 		if (this.y == that.y) { // Horizontal
-			return 0;
+			return new Double(0);
 		}
 
 		return ((that.y - this.y) * 1D) / (that.x - this.x);
@@ -77,6 +77,31 @@ public class Point implements Comparable<Point> {
 	public String toString() {
 		/* DO NOT MODIFY */
 		return "(" + x + ", " + y + ")";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Point other = (Point) obj;
+		if (x != other.x)
+			return false;
+		if (y != other.y)
+			return false;
+		return true;
 	}
 
 	// unit test

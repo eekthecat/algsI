@@ -9,7 +9,7 @@ public class Brute {
 							System.out.println(points[a] + " -> " + points[b]
 									+ " -> " + points[c] + " -> " + points[d]);
 
-							points[a].drawTo(points[b]);
+							points[a].drawTo(points[d]);
 							points[b].drawTo(points[c]);
 							points[c].drawTo(points[d]);
 						}
@@ -34,7 +34,7 @@ public class Brute {
         StdDraw.setPenRadius(StdDraw.getPenRadius());
 
 		In in = new In(
-				"/home/nsuarez/Cursos/Algorithms I/programmingExcercises/PatternRecognition/input6.txt");
+				"/home/nsuarez/Cursos/Algorithms I/programmingExcercises/PatternRecognition/input.txt");
 
 		int N = in.readInt();
 
