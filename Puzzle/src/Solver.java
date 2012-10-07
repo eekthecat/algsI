@@ -3,8 +3,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Solver {
-	private MinPQ<SearchNode> stepsQueue;
-	
 	private Comparator<SearchNode> hammingComparator = new Comparator<SearchNode>(){
 		@Override
 		public int compare(SearchNode s1, SearchNode s2){
@@ -21,12 +19,7 @@ public class Solver {
 	
 	public Solver(Board initialBoard) {
 		super();
-		this.stepsQueue = new MinPQ<SearchNode>(hammingComparator);
 		this.initialBoard = initialBoard;
-		SearchNode initialSearchNode = new SearchNode();
-		initialSearchNode.board = initialBoard;
-		initialSearchNode.previous = null;
-		stepsQueue.insert(initialSearchNode);
 	} // find a solution to the initial board (using the A* algorithm){}
 
 	public boolean isSolvable() {
@@ -35,10 +28,27 @@ public class Solver {
 		return twinSolver.solution() != null || this.solution() != null;
 	} // is the initial board solvable?
 
-//	public int moves() {
-//	} // min number of moves to solve initial board; -1 if no solution
+	public int moves() {
+		List<Board> solution = getSolutionBoards();
+		
+		if(solution == null){
+			return -1;
+		}
+		
+		return solution.size() - 1;
+	} // min number of moves to solve initial board; -1 if no solution
 
-	public Iterable<Board> solution() {
+	public Iterable<Board> solution(){
+		return getSolutionBoards();
+	}
+	
+	public List<Board> getSolutionBoards() {
+		MinPQ<SearchNode> stepsQueue = new MinPQ<SearchNode>(hammingComparator);
+		SearchNode initialSearchNode = new SearchNode();
+		initialSearchNode.board = initialBoard;
+		initialSearchNode.previous = null;
+		stepsQueue.insert(initialSearchNode);
+		
 		List<Board> solution = new ArrayList<Board>();
 		
 		Boolean foundGoal = Boolean.FALSE;
@@ -80,9 +90,19 @@ public class Solver {
 		
 		Solver solver = new Solver(initial);
 		
+		System.out.println("SOLUTION");
 		for(Board b:solver.solution()){
 			System.out.println(b);	
 		}
+		System.out.println("MOVES");
+		System.out.println(solver.moves());
 		
+		System.out.println("UNFEASIBLE");
+		Solver unfeasibleSolver = new Solver(new Board(new int[][] {
+			new int[]{1, 2, 3},
+			new int[]{4, 5, 6},
+			new int[]{8, 7, 0}
+		}));
+		System.out.println(unfeasibleSolver.isSolvable());
 	} // solve a slider puzzle (given below){}
 }
