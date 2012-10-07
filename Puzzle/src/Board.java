@@ -177,11 +177,6 @@ public class Board {
 	}
 	
 	public static void main(String [] args){
-//		int[][] blocks = new int[][] {
-//				new int[]{1, 8, 3},
-//				new int[]{4, 0, 6},
-//				new int[]{7, 2, 5}
-//			};
 		int[][] blocks = new int[][] {
 			new int[]{0,  1,  3},
 			new int[]{4, 2, 5},
