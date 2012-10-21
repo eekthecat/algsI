@@ -47,7 +47,7 @@ public class Fast {
         StdDraw.setPenRadius(StdDraw.getPenRadius());
 
 		In in = new In(
-				"/home/nsuarez/Cursos/Algorithms I/programmingExcercises/PatternRecognition/input.txt");
+				"/Users/nsuarez/Cursos/Algorithms I/programmingExcercises/PatternRecognition/input6.txt");
 
 		int N = in.readInt();
 
