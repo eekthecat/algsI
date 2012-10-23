@@ -57,57 +57,7 @@ public class KdTree {
 			
 			return insertRight(point);
 		}
-		
-		public Node nearestTo(Point2D point){
-			Node nearestLeft = nearestIn(left, point);
-			Node nearestRight = nearestIn(right, point);
 			
-			if(nearestLeft == null && nearestRight == null){
-				return this;
-			}
-			
-			Node n1 = getNearestOf(this, nearestLeft, point);
-			Node n2 = getNearestOf(this, nearestRight, point);
-			
-			return getNearestOf(n1, n2, point);
-		}
-		
-		private Node nearestIn(Node node, Point2D point){
-			if(node == null){
-				return null;
-			}
-			
-			return node.nearestTo(point);
-		}
-		
-		private Node getNearestOf(Node n1, Node n2, Point2D point){
-			if(n1 == null && n2 == null){
-				throw new NullPointerException();
-			}
-			
-			if(n1 == null){
-				return n2;
-			}
-			
-			if(n2 == null){
-				return n1;
-			}
-			
-			if(n1.equals(n2)){
-				return n1;
-			}
-			
-			if(n1.distanceSquaredTo(point) < n2.distanceSquaredTo(point)){
-				return n1;
-			}
-			
-			return n2;
-		}
-		
-		private Double distanceSquaredTo(Point2D point){
-			return value.distanceSquaredTo(point);
-		}
-		
 		public Boolean contains(Point2D point){
 			Integer cmp = this.compareTo(point);
 			
@@ -169,6 +119,10 @@ public class KdTree {
 				}
 			}
 		}
+		
+		public String toString(){
+			return value.toString() + " " + usesY;
+		}
 	}
 	
 	private interface TreeCommand{
@@ -224,6 +178,35 @@ public class KdTree {
 			
 			return Boolean.TRUE;
 		}
+	}
+	
+	private class NearestSearch implements TreeCommand{
+		Point2D queryPoint;
+		Point2D nearest;
+		Double nearestDistance = 0D;
+		
+		public NearestSearch(Point2D queryPoint){
+			this.queryPoint = queryPoint;
+		}
+
+		@Override
+		public Boolean execute(Node n, Double minX, Double minY, Double maxX,
+				Double maxY) {
+			Double distance = n.value.distanceSquaredTo(queryPoint);
+			
+			if(distance < nearestDistance || nearest == null){
+				nearest = n.value;
+				nearestDistance = distance;
+			}
+			
+			RectHV rect = new RectHV(minX, minY, maxX, maxY);
+			
+			if(rect.distanceSquaredTo(queryPoint) > nearestDistance){
+				return Boolean.FALSE;
+			}
+			
+			return Boolean.TRUE;
+		}
 		
 	}
 	
@@ -250,25 +233,6 @@ public class KdTree {
 		size++;
 	} // add the point p to the set (if it is not already in the set){}
 	
-//	private Node insert(Point2D p, Node n, Node parent){
-//		if(n == null)
-//			return parent.createNext(p);
-//		
-//		if(n.value.equals(p)){
-//			return n;
-//		}
-//		
-//		Integer cmp = n.compareTo(p);
-//		
-//		if(cmp < 0){
-//			n.left =  insert(p, n.left, n);
-//		}else{
-//			n.right = insert(p, n.right, n);
-//		}
-//		
-//		return n;
-//	}
-
 	public boolean contains(Point2D p) {
 		if(isEmpty()){
 			return Boolean.FALSE;
@@ -307,7 +271,11 @@ public class KdTree {
 			return null;
 		}
 		
-		return root.nearestTo(p).value;
+		NearestSearch search = new NearestSearch(p);
+		
+		root.executeRectCommand(search, minX, minY, maxX, maxY);
+		
+		return search.nearest;
 	}
 	
 	public static void main(String[] args){
@@ -320,16 +288,20 @@ public class KdTree {
 		tree.insert(new Point2D(90, 60));
 		
 		System.out.println(tree.size());
-		
+
+		System.out.println("Contains");
 		System.out.println(tree.contains(new Point2D(40, 70)));
 		System.out.println(tree.contains(new Point2D(8, 6456)));
 		
-//		System.out.println(tree.nearest(new Point2D(8, 6)));
-//		System.out.println(tree.nearest(new Point2D(8, 6.5D)));
-//		System.out.println(tree.nearest(new Point2D(5, 10)));
-//		System.out.println(tree.nearest(new Point2D(9, 10)));
-//		System.out.println(tree.nearest(new Point2D(-9, -10)));
+		System.out.println("Nearest");
+		Point2D point1 = new Point2D(55, 45);
+		System.out.println(tree.nearest(point1));
+		Point2D point2 = new Point2D(90, 80);
+		System.out.println(tree.nearest(point2));
 		
+		
+		
+		System.out.println("Range");
 		tree.draw();
 		
 		RectHV rect = new RectHV(30, 50, 95, 80);
@@ -341,6 +313,11 @@ public class KdTree {
 		for(Point2D p:pointsInRange){
 			System.out.println(p);
 		}
+		
+		StdDraw.setPenRadius(10D);
+		point1.draw();
+		point2.draw();
+		StdDraw.setPenRadius();
 		
 		StdDraw.show(0);
 	}
